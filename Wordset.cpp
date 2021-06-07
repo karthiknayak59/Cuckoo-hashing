@@ -38,14 +38,18 @@ void WordSet::insert(const std::string & s)
 
 	while(!insertString(s))
 	{
-		rehash();
+		// rehash when we find cycle and insert fails.
+		while(!rehash())
+		{
+			// keep rehashing till no cycles. Then attempt to insert new value.
+		}
 	}
 	inserted[insertedArrIndex++] = s;
 	if(rehashed == true)
 	{
 		rehashed = false;
 		std::string *newInserted = new std::string[size*2];
-		for (unsigned i = 0;inserted[i] != ""; i++) {
+		for (unsigned i = 0;i < size*2 && inserted[i] != ""; i++) {
 			newInserted[i] = inserted[i];
 		}
 		delete[] inserted;
@@ -55,7 +59,7 @@ void WordSet::insert(const std::string & s)
 
 bool WordSet::insertString(std::string s)
 {
-	for (int tries = 0; tries < log(size); tries+= 2)
+	for (int tries = 0; tries < log2(2*size); tries+= 2)
 	{
 		unsigned hash1 = polynomialHashFunction(s, BASE_H1, size);
 		if(hashtable1[hash1] != "")
@@ -85,7 +89,7 @@ bool WordSet::insertString(std::string s)
 	return false;
 }
 
-void WordSet::rehash()
+bool WordSet::rehash()
 {
 	rehashed = true;
 	size = 2*size+1;
@@ -100,13 +104,15 @@ void WordSet::rehash()
 	hashtable2 = new std::string[size];
 	hashtable1 = new std::string[size];
 
-	for(unsigned i = 0; inserted[i] != ""; i++)
+	for(unsigned i = 0; i< size-1 && inserted[i] != ""; i++)
 	{
 		if(!insertString(inserted[i]))
 		{
 			std::cout<<"\n Failed to insert.";
+			return false;
 		}
 	}
+	return true;
 }
 
 

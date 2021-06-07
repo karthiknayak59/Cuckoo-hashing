@@ -12,8 +12,8 @@ class WordSet
 	std::string *inserted;
 	unsigned insertedArrIndex = 0;
 	bool rehashed = false;
-	unsigned size = 11;
 	unsigned count = 0;
+	unsigned size = 11;
 public: 
 	explicit WordSet();
 	~WordSet();
@@ -31,7 +31,7 @@ private:
 	static constexpr unsigned BASE_H1 = 33;
 	static constexpr unsigned BASE_H2 = 41;    
 	bool insertString(std::string s);
-	void rehash();
+	bool rehash();
 	bool isPrime(unsigned n);
 };
 
